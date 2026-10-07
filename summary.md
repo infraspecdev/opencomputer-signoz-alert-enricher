@@ -1,55 +1,52 @@
-# OpenComputer evaluation: SigNoz alert enricher
+# OpenComputer evaluation
 
-An OpenComputer agent that adds context to SigNoz alerts in the
-`office-infra-alerts` Google Chat space. See [setup.md](setup.md) for how it
-was built.
+Findings from building a SigNoz alert enricher on OpenComputer. See
+[setup.md](setup.md) for how it was built.
 
 ## Findings
 
-- **Fast to get running.** `install → login → init → link → deploy` took
-  minutes. `opencomputer doctor` caught structural mistakes before deploy
-  (non-literal connection origins, tools outside `tools/`).
-- **No Google Chat channel.** Chat integrations are Slack, Twilio (SMS/WhatsApp)
-  and email, defined in code, plus Linear through a managed connection.
-  Talking to the agent from Google Chat would need a Google Chat app pointed at
-  a webhook.
-- **SigNoz can call the agent directly.** The webhook accepts SigNoz's raw
-  Alertmanager payload; it arrives as `input.payload`.
-- **End to end works.** A real OOMKill in `office-k8s` fired the SigNoz rule;
-  the agent enriched it and posted to `office-infra-alerts` within ~3 minutes.
-- **Separate message, not a reply.** SigNoz's Google Chat post exposes no
-  thread, so the agent cannot attach to the original alert.
-- **Sessions are pinned to their deployment.** Follow-ups on old sessions run
-  old code; only new sessions pick up a redeploy.
-- **Behaviour is code, not prompts.** Branching on `input.source` decides which
-  tools exist per run: webhook runs post the enrichment; terminal runs post
-  only when asked.
-- **Agent-level env vars failed** with "service unavailable"; project-level
-  worked.
-- **A built-in `execute` tool exists.** The agent used it unprompted to look
-  for a project database; we never declared it.
-- **Alert history is blocked** until the SigNoz service account gets a role
-  (currently 403).
+- **Quick to start.** Install, login, init, link and deploy took minutes.
+  Redeploys take seconds.
+- **`opencomputer doctor` catches mistakes early.** It flags structural
+  problems (tool placement, connection origins, missing secrets) before deploy.
+- **Agents are TypeScript.** The agent is a function that runs before each
+  model call and picks the model, tools and prompt for that turn. Tool access
+  can depend on where the input came from (webhook, terminal, channel).
+- **Many ways in.** Webhooks, `opencomputer run`, interactive sessions,
+  schedules, and channels all reach the same agent.
+- **Webhooks accept any JSON.** A third-party payload (SigNoz's Alertmanager
+  format) worked as-is and arrived as `input.payload`.
+- **Channels:** Slack, Twilio (SMS/WhatsApp) and email are defined in code;
+  Linear connects as a managed service. No Google Chat.
+- **Managed egress for secrets.** Outbound calls go through a gateway that
+  injects secrets per origin, path and method. Secrets never reach agent code.
+  Secrets can only be injected into headers.
+- **Full observability.** Session events show every model call, tool call and
+  outbound request with status codes.
+- **Sessions are pinned to their deployment.** A redeploy does not change
+  existing sessions; only new sessions run new code.
+- **Built-in tools exist beyond what you declare.** The agent used a
+  platform `execute` tool on its own to look for a project database.
+- **Models route through OpenRouter** by default, on managed credits ($5 free).
 
 ## Pros
 
-- Agents as code: TypeScript, version-controlled, deployed with one command.
-- Managed egress injects secrets per origin, path and method; secrets never
-  sit in agent code.
-- Detailed session events: every tool call, outbound request and model call is
-  visible.
-- Webhooks, `opencomputer run` and `session send` all reach the same agent.
-- Fast iteration: redeploys take seconds.
+- Agents as code: version-controlled, reviewable, one-command deploys.
+- Secrets handled by the platform, scoped per destination.
+- Detailed, inspectable session history for debugging.
+- Flexible triggers: webhook, CLI, sessions, schedules, channels.
+- Fast feedback loop.
 
 ## Cons
 
-- No Google Chat channel; two-way chat needs custom setup.
-- Secrets can only go in headers. Google Chat's webhook token sits in the query
-  string, so it appears in egress logs.
-- The webhook URL carries its token; anyone with the URL can trigger the agent.
-- Old sessions do not pick up fixes after a redeploy.
-- Models route through OpenRouter by default; free credits are small ($5).
-- CLI rough edges: confusing agent ids, agent-level `env set` failing,
-  `session inspect` not finding sessions.
-- "Only post when asked" in terminal mode is enforced by the prompt, not a
-  hard block.
+- No Google Chat channel.
+- Secrets only in headers; APIs that authenticate via query string (like
+  Google Chat webhooks) need a plain runtime variable, and the value shows up
+  in egress logs.
+- Webhook URLs embed their token; anyone with the URL can trigger the agent.
+- Old sessions keep running old code after a redeploy.
+- Undeclared built-in tools make the agent's reach less obvious.
+- CLI rough edges: agent ids differ from local names, agent-level `env set`
+  failed while project-level worked, `session inspect` could not find
+  sessions that `sessions tail` could.
+- Small free credit allowance.
