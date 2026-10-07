@@ -3,6 +3,18 @@
 Findings from building a SigNoz alert enricher on OpenComputer. See
 [setup.md](setup.md) for how it was built.
 
+## TL;DR
+
+- OpenComputer is like **Vercel for agents**: write the agent as code, run
+  one command, and it is deployed on a managed runtime with logs and a
+  dashboard.
+- Getting a working agent took minutes; the SigNoz → agent → Google Chat flow
+  worked end to end on a real alert.
+- Strong on developer experience: secrets, observability, and many ways to
+  trigger the agent.
+- Gaps: no Google Chat channel, secrets only in headers, and some CLI rough
+  edges.
+
 ## Findings
 
 - **Quick to start.** Install, login, init, link and deploy took minutes.
