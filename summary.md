@@ -5,15 +5,14 @@ Findings from building a SigNoz alert enricher on OpenComputer. See
 
 ## TL;DR
 
-- OpenComputer is like **Vercel for agents**: write the agent as code, run
-  one command, and it is deployed on a managed runtime with logs and a
-  dashboard.
+- OpenComputer feels like **Vercel for agents**: link a project, deploy from
+  code with one command, and manage env, secrets and logs from the CLI.
 - Getting a working agent took minutes; the SigNoz → agent → Google Chat flow
   worked end to end on a real alert.
 - Strong on developer experience: secrets, observability, and many ways to
   trigger the agent.
-- Gaps: no Google Chat channel, secrets only in headers, and some CLI rough
-  edges.
+- Gaps: Codex is the only subscription you can bring, no Google Chat channel,
+  secrets only in headers, and some CLI rough edges.
 
 ## Findings
 
@@ -40,6 +39,8 @@ Findings from building a SigNoz alert enricher on OpenComputer. See
 - **Built-in tools exist beyond what you declare.** The agent used a
   platform `execute` tool on its own to look for a project database.
 - **Models route through OpenRouter** by default, on managed credits ($5 free).
+  You can bring a Codex subscription, an OpenRouter key, or any
+  OpenAI-compatible endpoint (read from CLI help; not tested).
 
 ## Pros
 
@@ -51,6 +52,8 @@ Findings from building a SigNoz alert enricher on OpenComputer. See
 
 ## Cons
 
+- **Codex is the only subscription you can bring.** Other models need an
+  OpenRouter key or an OpenAI-compatible endpoint.
 - No Google Chat channel.
 - Secrets only in headers; APIs that authenticate via query string (like
   Google Chat webhooks) need a plain runtime variable, and the value shows up
