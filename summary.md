@@ -14,6 +14,14 @@ Findings from building a SigNoz alert enricher on OpenComputer. See
 - Gaps: Codex is the only subscription you can bring, no Google Chat channel,
   secrets only in headers, and some CLI rough edges.
 
+## What it looks like
+
+- [Alert enrichment](docs/images/alert-enrichment.png): the agent's context
+  message in Google Chat for a real OOMKilled alert from this sample.
+- [Follow-up reply](docs/images/follow-up-reply.png): a question asked from the
+  terminal with `opencomputer session send`, posted as a thread reply under
+  the alert.
+
 ## Findings
 
 - **Quick to start.** Install, login, init, link and deploy took minutes.
