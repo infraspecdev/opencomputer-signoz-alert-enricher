@@ -38,7 +38,7 @@ Findings from building a SigNoz alert enricher on OpenComputer. See
   existing sessions; only new sessions run new code.
 - **Built-in tools exist beyond what you declare.** The agent used a
   platform `execute` tool on its own to look for a project database.
-- **Models route through OpenRouter** by default, on managed credits ($5 free).
+- **Models route through OpenRouter** by default, on managed credits.
   You can bring a Codex subscription, an OpenRouter key, or any
   OpenAI-compatible endpoint (read from CLI help; not tested).
 
@@ -58,10 +58,8 @@ Findings from building a SigNoz alert enricher on OpenComputer. See
 - Secrets only in headers; APIs that authenticate via query string (like
   Google Chat webhooks) need a plain runtime variable, and the value shows up
   in egress logs.
-- Webhook URLs embed their token; anyone with the URL can trigger the agent.
 - Old sessions keep running old code after a redeploy.
 - Undeclared built-in tools make the agent's reach less obvious.
 - CLI rough edges: agent ids differ from local names, agent-level `env set`
   failed while project-level worked, `session inspect` could not find
   sessions that `sessions tail` could.
-- Small free credit allowance.
