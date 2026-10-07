@@ -1,0 +1,27 @@
+# Demo workload for the SigNoz alert enricher: allocates past its memory
+# limit and stays OOMKilled (restartPolicy: Never) so the alert fires steadily.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: opencomputer-demo
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: oom-demo
+  namespace: opencomputer-demo
+  labels:
+    app: oom-demo
+spec:
+  restartPolicy: Never
+  containers:
+    - name: memory-hog
+      image: python:3.13-alpine
+      command: ["python", "-c", "import time; b = bytearray(200 * 1024 * 1024); time.sleep(3600)"]
+      resources:
+        requests:
+          memory: 32Mi
+          cpu: 10m
+        limits:
+          memory: 64Mi
+          cpu: 100m
