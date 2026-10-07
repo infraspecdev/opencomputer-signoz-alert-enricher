@@ -55,6 +55,13 @@ Findings from building a SigNoz alert enricher on OpenComputer. See
 - **Codex is the only subscription you can bring.** Other models need an
   OpenRouter key or an OpenAI-compatible endpoint.
 - No Google Chat channel.
+- **Conversations only resume on built-in integrations.** On Slack, Twilio,
+  email or Linear, a reply continues the same session. Elsewhere (like Google
+  Chat via webhook) every message starts a new session; follow-ups need
+  `opencomputer session send <id>` from the CLI or custom session mapping.
+- **Not self-hostable outside Enterprise.** Running in your own cloud or VPC
+  is an Enterprise (custom pricing) feature; other plans run on OpenComputer's
+  cloud.
 - Secrets only in headers; APIs that authenticate via query string (like
   Google Chat webhooks) need a plain runtime variable, and the value shows up
   in egress logs.
