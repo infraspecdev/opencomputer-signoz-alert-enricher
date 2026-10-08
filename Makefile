@@ -33,7 +33,7 @@ login: ## Log in to OpenComputer
 	opencomputer login
 
 whoami: ## Show the logged-in user and organization
-	@opencomputer whoami
+	opencomputer whoami
 
 doctor: ## Check the project before deploy
 	$(call step,Checking the project with opencomputer doctor)
@@ -45,12 +45,12 @@ deploy: doctor ## Check and deploy the agent
 
 secret-signoz: ## Store the SigNoz API key (prompted, not echoed)
 	$(call step,Storing SIGNOZ_API_KEY as an OpenComputer secret)
-	@read -s -p "SigNoz API key: " key && echo && printf %s "$$key" | opencomputer secrets set SIGNOZ_API_KEY --value-stdin
+	read -s -p "SigNoz API key: " key && echo && printf %s "$$key" | opencomputer secrets set SIGNOZ_API_KEY --value-stdin
 
 env-chat: ## Store the Google Chat webhook key+token (prompted, not echoed)
 	$(call step,Storing GOOGLE_CHAT_WEBHOOK_QUERY as a runtime variable)
 	@echo "  Paste the part after '?' in the space's webhook URL: key=...&token=..."
-	@read -s -p "Query: " q && echo && printf %s "$$q" | opencomputer env set GOOGLE_CHAT_WEBHOOK_QUERY --value-stdin
+	read -s -p "Query: " q && echo && printf %s "$$q" | opencomputer env set GOOGLE_CHAT_WEBHOOK_QUERY --value-stdin
 
 webhook: ## Create the SigNoz webhook (prints the URL once; keep it secret)
 	$(call step,Creating the signoz-alerts webhook)
@@ -60,30 +60,30 @@ webhook: ## Create the SigNoz webhook (prints the URL once; keep it secret)
 
 status: ## Show agent, secrets, webhooks and demo pods
 	$(call step,Agent)
-	@opencomputer agents
+	opencomputer agents
 	$(call step,Secrets and runtime variables (names only))
-	@opencomputer secrets list
-	@opencomputer env list
+	opencomputer secrets list
+	opencomputer env list
 	$(call step,Webhooks)
-	@opencomputer webhooks list --agent $(AGENT) | sed -E 's#(agent-webhooks/)[^ ]+#\1<redacted>#'
+	opencomputer webhooks list --agent $(AGENT) | sed -E 's#(agent-webhooks/)[^ ]+#\1<redacted>#'
 	$(call step,Demo pods in $(NAMESPACE))
-	@$(KUBECTL) -n $(NAMESPACE) get pods 2>/dev/null || echo "  No demo pods yet."
+	$(KUBECTL) -n $(NAMESPACE) get pods 2>&1
 
 oom: ## Start a pod that gets OOMKilled (fires the SigNoz alert)
 	$(call step,Starting pod $(POD): 200Mi allocation against a 64Mi limit)
 	@mkdir -p .opencomputer && date -u +%Y-%m-%dT%H:%M:%SZ > $(STAMP_FILE)
-	@sed 's/name: oom-demo$$/name: $(POD)/' k8s/oom-demo.yaml | $(KUBECTL) apply -f -
+	sed 's/name: oom-demo$$/name: $(POD)/' k8s/oom-demo.yaml | $(KUBECTL) apply -f -
 	@printf '  Waiting for Kubernetes to kill it'
 	@until $(KUBECTL) -n $(NAMESPACE) get pod $(POD) -o jsonpath='{.status.containerStatuses[0].state.terminated.reason}' 2>/dev/null | grep -q .; do printf .; sleep 3; done; echo
-	@$(KUBECTL) -n $(NAMESPACE) get pod $(POD) -o wide
+	$(KUBECTL) -n $(NAMESPACE) get pod $(POD) -o wide
 
 wait-alert: ## Wait until SigNoz calls the agent (~3 min)
 	$(call step,Waiting for SigNoz to evaluate the rule and call the agent)
-	@$(OC) wait --since "$$(cat $(STAMP_FILE) 2>/dev/null || date -u +%Y-%m-%dT%H:%M:%SZ)"
+	$(OC) wait --since "$$(cat $(STAMP_FILE) 2>/dev/null || date -u +%Y-%m-%dT%H:%M:%SZ)"
 
 summary: ## Summarise a session (SESSION=<id>, default: newest)
 	$(call step,What the agent did in session $(SESSION))
-	@$(OC) summary $(SESSION)
+	$(OC) summary $(SESSION)
 
 demo: oom wait-alert ## Full demo: OOMKill → alert → agent → Google Chat
 	@$(MAKE) --no-print-directory summary
@@ -105,7 +105,7 @@ follow-up: ## Ask about an alert; reply goes in its Chat thread (Q="..." [SESSIO
 	opencomputer session send $(SESSION) "$(Q) Post the answer to Chat."
 
 sessions: ## List recent sessions
-	@opencomputer session list --limit 10
+	opencomputer session list --limit 10
 
 logs: ## Follow runtime logs
 	opencomputer logs --follow
