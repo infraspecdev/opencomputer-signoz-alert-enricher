@@ -2,6 +2,8 @@
 
 An OpenComputer agent that adds context to SigNoz alerts in Google Chat.
 
+![Demo: an OOMKilled pod fires a SigNoz alert, the agent posts context to Google Chat, then answers a follow-up](docs/demo/demo.gif)
+
 - [setup.md](setup.md): how to set up and deploy the project.
 - [summary.md](summary.md): findings, pros and cons of OpenComputer.
 - [demo.md](demo.md): a script for a live demo. Run `make help` to see the
@@ -78,5 +80,6 @@ system.
 | `opencomputer/agents/signoz-alert-enricher/tools/` | The SigNoz history tool and the Google Chat tools |
 | `k8s/oom-demo.yaml` | The test pod |
 | `docs/images/` | Screenshots of the messages in Google Chat |
+| `docs/demo/` | Demo recording: GIF, asciinema cast, and Google Chat screenshots |
 | `Makefile` | Commands for setup and the demo |
 | `scripts/oc.py` | Helper for the Makefile: waits for sessions and shows a summary |
