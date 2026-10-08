@@ -5,7 +5,6 @@ An OpenComputer agent that adds context to SigNoz alerts in Google Chat.
 ![Demo: an OOMKilled pod fires a SigNoz alert, the agent posts context to Google Chat, then answers a follow-up](docs/demo/demo.gif)
 
 - [setup.md](setup.md): how to set up and deploy the project.
-- [summary.md](summary.md): findings, pros and cons of OpenComputer.
 - [demo.md](demo.md): a script for a live demo. Run `make help` to see the
   commands.
 

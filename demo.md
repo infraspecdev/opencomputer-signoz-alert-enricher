@@ -100,7 +100,7 @@ make ask Q="What usually causes OOMKilled?"
 
 ## 6. Wrap up (1 min)
 
-Point to [summary.md](summary.md):
+Sum up the findings:
 
 - **Good:** deploys in seconds, secrets handled by the platform, full session
   history.
