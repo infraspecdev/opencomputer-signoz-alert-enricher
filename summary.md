@@ -55,6 +55,8 @@ Findings from building a SigNoz alert enricher on OpenComputer. See
 - Agents as code: version-controlled, reviewable, one-command deploys.
 - Secrets handled by the platform, scoped per destination.
 - Detailed, inspectable session history for debugging.
+- Persistent sessions: a session stays after the answer. You can ask more
+  questions later, and the agent keeps the full context.
 - Flexible triggers: webhook, CLI, sessions, schedules, channels.
 - Fast feedback loop.
 
