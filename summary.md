@@ -53,12 +53,21 @@ Findings from building a SigNoz alert enricher on OpenComputer. See
 ## Pros
 
 - Agents as code: version-controlled, reviewable, one-command deploys.
+- Checks before deploy: `opencomputer doctor` finds errors in the agent before
+  you deploy it.
+- Tool control in code: the code sets which tools each run can use, for
+  example a webhook run can post to Chat and a terminal run only when asked.
 - Secrets handled by the platform, scoped per destination.
+- Controlled outgoing access: each connection gives the permitted address,
+  path and method, and the gateway permits only these requests.
 - Detailed, inspectable session history for debugging.
 - Persistent sessions: a session stays after the answer. You can ask more
   questions later, and the agent keeps the full context.
 - Flexible triggers: webhook, CLI, sessions, schedules, channels.
 - Fast feedback loop.
+
+The SDK also has approval steps, memory, schedules and a managed GitHub App.
+We did not test them.
 
 ## Cons
 
